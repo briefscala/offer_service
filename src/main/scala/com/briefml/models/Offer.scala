@@ -3,8 +3,6 @@ package com.briefml.models
 import java.time.Clock
 
 import akka.http.scaladsl.model.DateTime
-import cats.instances.either._
-import cats.syntax.cartesian._
 import com.briefml.models.OfferStatus.{Expired, Inactive}
 import io.circe.{Decoder, Encoder}
 
@@ -45,13 +43,15 @@ object Offer {
       (o.id, o.span.start.toIsoDateTimeString, o.span.duration, o.status.entryName.toLowerCase)
     )
 
+  import cats.implicits._
+
   implicit def offerDecoder: Decoder[Offer[Int]] = Decoder.instance ( cursor =>
     (
-      cursor.get[Int]("id") |@|
-      cursor.get[String]("start_date") |@|
-      cursor.get[Int]("duration") |@|
+      cursor.get[Int]("id"),
+      cursor.get[String]("start_date"),
+      cursor.get[Int]("duration"),
       cursor.get[Option[String]]("status")
-    ).map { case (id, date, duration, status) =>
+    ).mapN { case (id, date, duration, status) =>
       val someStatus = status match {
         case Some(st) => OfferStatus.withNameInsensitive(st)
         case None => Inactive
