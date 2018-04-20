@@ -9,7 +9,6 @@ libraryDependencies ++= {
   val circeVersion = "0.9.3"
   Seq(
     "com.typesafe.akka" %% "akka-http" % "10.0.8"
-    ,"com.typesafe.akka" %% "akka-http-spray-json" % "10.0.6"
     ,"com.beachape" %% "enumeratum" % enumeratumVersion
     ,"com.typesafe.akka" %% "akka-http-testkit" % "10.0.8" % Test
   ) ++ Seq(
