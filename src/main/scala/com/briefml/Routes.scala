@@ -46,7 +46,7 @@ case class Routes(offerApi: OfferApi) {
       } ~ (path("offers") & post) {
         entity(as[Offer[Unit]]) { offer: Offer[Unit] =>
           val future = offerApi.insertOffer(offer)
-            .map(_ => s"the offer with offer_id ${offer.id} was successfully persisted")
+            .map(_ => s"the offer starting ${offer.span.start} for ${offer.span.duration} was successfully added")
           complete(future)
         }
       } ~ (path("offer_update") & post) {
