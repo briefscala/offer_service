@@ -45,7 +45,23 @@ object Offer {
 
   import cats.implicits._
 
-  implicit def offerDecoder: Decoder[Offer[Int]] = Decoder.instance ( cursor =>
+  implicit def offerDecoder: Decoder[Offer[Unit]] = Decoder.instance ( cursor =>
+    (
+      cursor.get[String]("start_date"),
+      cursor.get[Int]("duration")
+    ).mapN { case (date, duration) =>
+      Offer(
+        (),
+        TimeRange(
+          DateTime.fromIsoDateTimeString(date).getOrElse(DateTime.now),
+          duration
+        ),
+        Inactive
+      )
+    }
+  )
+
+  implicit def offerUpdateDecoder: Decoder[Offer[Int]] = Decoder.instance ( cursor =>
     (
       cursor.get[Int]("id"),
       cursor.get[String]("start_date"),

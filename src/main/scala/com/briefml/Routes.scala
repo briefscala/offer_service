@@ -44,9 +44,15 @@ case class Routes(offerApi: OfferApi) {
                 entity = HttpEntity(error.getMessage)))
         }
       } ~ (path("offers") & post) {
-        entity(as[Offer[Int]]) { offer =>
-          val future = offerApi.upsertOffer(offer)
+        entity(as[Offer[Unit]]) { offer: Offer[Unit] =>
+          val future = offerApi.insertOffer(offer)
             .map(_ => s"the offer with offer_id ${offer.id} was successfully persisted")
+          complete(future)
+        }
+      } ~ (path("offer_update") & post) {
+        entity(as[Offer[Int]]) { offer: Offer[Int] =>
+          val future = offerApi.upsertOffer(offer)
+            .map(_ => s"the offer with offer_id ${offer.id} was successfully updated")
           complete(future)
         }
       } ~ (path("offer" / "delete" / IntNumber) & put) { offerId =>
