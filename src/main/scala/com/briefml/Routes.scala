@@ -43,7 +43,7 @@ case class Routes(offerApi: OfferApi) {
                 status = StatusCodes.InternalServerError,
                 entity = HttpEntity(error.getMessage)))
         }
-      } ~ (path("offers") & post) {
+      } ~ (path("offers") & put) {
         entity(as[Offer[Unit]]) { offer: Offer[Unit] =>
           val future = offerApi.insertOffer(offer)
             .map(_ => s"the offer starting ${offer.span.start} for ${offer.span.duration} was successfully added")
@@ -55,8 +55,8 @@ case class Routes(offerApi: OfferApi) {
             .map(_ => s"the offer with offer_id ${offer.id} was successfully updated")
           complete(future)
         }
-      } ~ (path("offer" / "delete" / IntNumber) & put) { offerId =>
-        val future = offerApi.deleteOffer(offerId).map(_=> s"the offer with offer_id $offerId was permanently deleted")
+      } ~ (path("offer" / "delete" / IntNumber) & delete) { offerId =>
+        val future = offerApi.deleteOffer(offerId).map(_=> s"the offer with offer_id $offerId/h was permanently deleted")
         complete(future)
       } ~ path("offer_by_status" / Segment) { status =>
         val future = offerApi.offerByStatus(OfferStatus.withNameInsensitive(status))
