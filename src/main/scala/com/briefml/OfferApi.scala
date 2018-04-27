@@ -46,7 +46,7 @@ case class OfferApi(offerRepository: OfferRepository) {
   def insertOffer(offer: Offer[Unit]) = {
     val futMaybeMax = OfferRepository.offerList.map(
       _.map {case (key,_,_) => key})
-      .map(maybeMax[Int])
+      .map(maybeMax(_))
     futMaybeMax.collect {
       case Nil => OfferRepository.upsert(offer.copy(id = 0))
       case max :: Nil => OfferRepository.upsert(offer.copy(id = max + 1))
