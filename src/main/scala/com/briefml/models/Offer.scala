@@ -10,13 +10,6 @@ sealed case class TimeRange(start: DateTime, duration: Int) {
   def endMillis: Long = start.clicks + duration * 3600000
 }
 
-trait OfferT[ID] {
-  def id: ID
-  def span: TimeRange
-  def status: OfferStatus
-  def clock: Clock
-}
-
 case class Offer[ID](
   id: ID,
   span: TimeRange,

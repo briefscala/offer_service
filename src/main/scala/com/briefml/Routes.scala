@@ -30,10 +30,10 @@ case class Routes(offerApi: OfferApi) {
           complete(s"post pong $version")
         }
       } ~ path("offer_by_id" / IntNumber) { offerId =>
-        val futureOffer: Future[Iterable[Offer[Int]]] = offerApi.offerById(offerId)
+        val futureOffer: Future[Option[Offer[Int]]] = offerApi.offerById(offerId)
         onComplete(futureOffer) {
-          case Success(iter) =>
-            iter.headOption match {
+          case Success(maybeOffer) =>
+            maybeOffer match {
               case Some(offer) => complete(offer.asJson.pretty(Printer.spaces2))
               case None => complete(StatusCodes.NotFound)
             }
@@ -60,7 +60,7 @@ case class Routes(offerApi: OfferApi) {
         complete(future)
       } ~ path("offer_by_status" / Segment) { status =>
         val future = offerApi.offerByStatus(OfferStatus.withNameInsensitive(status))
-        complete(future)
+        complete(future.map(_.toIterable))
       }
     }
 }
